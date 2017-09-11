@@ -98,6 +98,7 @@ public final class BidirectionalBeamSearchPathfinder implements Pathfinder {
                 
                 List<Integer> successors = 
                         getForwardSuccessors(graph,
+                                             openBackward.peek().node,
                                              currentNode, 
                                              targetNode,
                                              distancesForward,
@@ -147,6 +148,7 @@ public final class BidirectionalBeamSearchPathfinder implements Pathfinder {
                 
                 List<Integer> successors = 
                         getBackwardSuccessors(graph,
+                                              openForward.peek().node,
                                               currentNode, 
                                               sourceNode,
                                               distancesBackward,
@@ -195,6 +197,7 @@ public final class BidirectionalBeamSearchPathfinder implements Pathfinder {
     
     private static List<Integer> 
         getForwardSuccessors(AbstractGraph graph,
+                             Integer backwardTop,
                              Integer currentNode,
                              Integer targetNode,
                              Map<Integer, Double> distances,
@@ -209,7 +212,7 @@ public final class BidirectionalBeamSearchPathfinder implements Pathfinder {
                     successor,
                     distances.get(currentNode) + 
                         graph.getEdgeWeight(currentNode, successor) +
-                        heuristicFunction.estimate(successor, targetNode));
+                        heuristicFunction.estimate(successor, backwardTop));
         }
 
         Collections.sort(successors, (a, b) -> {
@@ -222,6 +225,7 @@ public final class BidirectionalBeamSearchPathfinder implements Pathfinder {
      
     private static List<Integer>
             getBackwardSuccessors(AbstractGraph graph,
+                                  Integer forwardTop,
                                   Integer currentNode, 
                                   Integer sourceNode,
                                   Map<Integer, Double> distances,
@@ -236,7 +240,7 @@ public final class BidirectionalBeamSearchPathfinder implements Pathfinder {
                     successor,
                     distances.get(currentNode) +
                         graph.getEdgeWeight(successor, currentNode) +
-                        heuristicFunction.estimate(successor, sourceNode));
+                        heuristicFunction.estimate(successor, forwardTop));
         }
         
         Collections.sort(successors, (a, b) -> {
